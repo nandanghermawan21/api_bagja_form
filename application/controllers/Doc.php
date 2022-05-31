@@ -49,10 +49,24 @@ class Doc extends MY_Controller {
 						],
 						'responses'=>[
 							'200'=> [
-								'description'=>'Success login'
+								'description'=>'Success login',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/ValidLogin'
+										],
+									]
+								]
 							],
 							'400'=> [
-								'description'=>'Bad Request, invalid data user'
+								'description'=>'Bad Request, invalid data user',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/InvalidLogin'
+										],
+									]
+								]
 							],
 						]
 
@@ -84,7 +98,16 @@ class Doc extends MY_Controller {
 							'200'=> [
 								'description'=>'Get Success'
 							],
-
+							'401'=> [
+								'description'=>'Unauthorized',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/Unauthorized'
+										],
+									]
+								]
+							],
 						],
 					]
 
@@ -117,6 +140,16 @@ class Doc extends MY_Controller {
 						'responses'=>[
 							'200'=> [
 								'description'=>'Create Success'
+							],
+							'401'=> [
+								'description'=>'Unauthorized',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/Unauthorized'
+										],
+									]
+								]
 							],
 
 						],
@@ -154,6 +187,16 @@ class Doc extends MY_Controller {
 						'responses'=>[
 							'200'=> [
 								'description'=>'Create Success'
+							],
+							'401'=> [
+								'description'=>'Unauthorized',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/Unauthorized'
+										],
+									]
+								]
 							],
 
 						],
@@ -212,6 +255,16 @@ class Doc extends MY_Controller {
 							'200'=> [
 								'description'=>'Get Success'
 							],
+							'401'=> [
+								'description'=>'Unauthorized',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/Unauthorized'
+										],
+									]
+								]
+							],
 
 						],
 					]
@@ -248,6 +301,16 @@ class Doc extends MY_Controller {
 						'responses'=>[
 							'200'=> [
 								'description'=>'Create Success'
+							],
+							'401'=> [
+								'description'=>'Unauthorized',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/Unauthorized'
+										],
+									]
+								]
 							],
 
 						],
@@ -289,6 +352,16 @@ class Doc extends MY_Controller {
 							'200'=> [
 								'description'=>'Create Success'
 							],
+							'401'=> [
+								'description'=>'Unauthorized',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/Unauthorized'
+										],
+									]
+								]
+							],
 
 						],
 					]
@@ -317,6 +390,16 @@ class Doc extends MY_Controller {
 							'200'=> [
 								'description'=>'Create Success'
 							],
+							'401'=> [
+								'description'=>'Unauthorized',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/Unauthorized'
+										],
+									]
+								]
+							],
 
 						],
 					]
@@ -344,6 +427,16 @@ class Doc extends MY_Controller {
 						'responses'=>[
 							'200'=> [
 								'description'=>'Create Success'
+							],
+							'401'=> [
+								'description'=>'Unauthorized',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/Unauthorized'
+										],
+									]
+								]
 							],
 
 						],
@@ -407,6 +500,16 @@ class Doc extends MY_Controller {
 							'200'=> [
 								'description'=>'Create Success'
 							],
+							'401'=> [
+								'description'=>'Unauthorized',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/Unauthorized'
+										],
+									]
+								]
+							],
 
 						],
 					]
@@ -435,6 +538,16 @@ class Doc extends MY_Controller {
 						'responses'=>[
 							'200'=> [
 								'description'=>'Create Success'
+							],
+							'401'=> [
+								'description'=>'Unauthorized',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/Unauthorized'
+										],
+									]
+								]
 							],
 
 						],
@@ -501,6 +614,16 @@ class Doc extends MY_Controller {
 							'200'=> [
 								'description'=>'Create Success'
 							],
+							'401'=> [
+								'description'=>'Unauthorized',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/Unauthorized'
+										],
+									]
+								]
+							],
 
 						],
 					]
@@ -529,6 +652,16 @@ class Doc extends MY_Controller {
 							'200'=> [
 								'description'=>'Delete Success'
 							],
+							'401'=> [
+								'description'=>'Unauthorized',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/Unauthorized'
+										],
+									]
+								]
+							],
 
 						],
 					]
@@ -544,6 +677,21 @@ class Doc extends MY_Controller {
 						]
 				],
 				'schemas' => [
+					'Unauthorized'=> [
+						'properties'=>[
+							'success' => [
+								'type'=>'string',															
+							],
+							'token' => [
+								'type' => 'string',																		
+							]
+						],
+						'example'=> [
+							'success' => false,
+							'token'=> 'Unauthorized'
+						],
+						'type'=>'object'
+					],
 					'auth' => [
 						'properties'=>[
 							'username' => [
@@ -552,6 +700,36 @@ class Doc extends MY_Controller {
 							'password' => [
 								'type'=>'string',												
 							]
+						],
+						'type'=>'object'
+					],
+					'ValidLogin' => [
+						'properties'=>[
+							'success' => [
+								'type'=>'string',															
+							],
+							'token' => [
+								'type' => 'string',																		
+							]
+						],
+						'example'=> [
+							'success' => true,
+							'token'=> 'eyJ0eXAiOiJKV1QiLCJhbxxxxxxxxx'
+						],
+						'type'=>'object'
+					],
+					'InvalidLogin' => [
+						'properties'=>[
+							'success' => [
+								'type'=>'string',															
+							],
+							'token' => [
+								'type' => 'string',																		
+							]
+						],
+						'example'=> [
+							'success' => false,
+							'token'=> 'invalid username or password'
 						],
 						'type'=>'object'
 					]

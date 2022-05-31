@@ -40,32 +40,35 @@ class Level extends MY_Controller {
 
 		$data = array('success' => false, 'messages' => array());
 		$input = json_decode(trim(file_get_contents('php://input')), true);		
-		$this->form_validation->set_data($input);
-		foreach($val as $row => $key) :
-			$this->form_validation->set_rules($row, $key, 'trim|required|xss_clean');
-		endforeach;
-		$this->form_validation->set_error_delimiters(null, null);
-
-		if ($this->form_validation->run() == FALSE) {
-				foreach ($val as $key => $value) {
-					$data['messages'][$key] = form_error($key);
-				}
-				http_response_code('400');
-		  }
-		  else
-		  {
-					$val = [
-						'parent_id' => $input['id'],
-						'child_id' => $input['child_id']
-					];
-					$this->mdata->insert_all('usm_organitation_level',$val);
-					$data = [
-						'success' =>true,
-						'message'=>'create level success'
-					];
-					http_response_code('200');
-		  }
-		echo json_encode($data);
+		if($input)
+		{
+			$this->form_validation->set_data($input);
+			foreach($val as $row => $key) :
+				$this->form_validation->set_rules($row, $key, 'trim|required|xss_clean');
+			endforeach;
+			$this->form_validation->set_error_delimiters(null, null);
+	
+			if ($this->form_validation->run() == FALSE) {
+					foreach ($val as $key => $value) {
+						$data['messages'][$key] = form_error($key);
+					}
+					http_response_code('400');
+			  }
+			  else
+			  {
+						$val = [
+							'parent_id' => $input['id'],
+							'child_id' => $input['child_id']
+						];
+						$this->mdata->insert_all('usm_organitation_level',$val);
+						$data = [
+							'success' =>true,
+							'message'=>'create level success'
+						];
+						http_response_code('200');
+			  }
+			echo json_encode($data);
+		}
 	}
 
 	public function show()
@@ -83,50 +86,54 @@ class Level extends MY_Controller {
 
 				$data = array('success' => false, 'messages' => array());
 				$input = json_decode(trim(file_get_contents('php://input')), true);		
-				$this->form_validation->set_data($input);
-				foreach($val as $row => $key) :
-					$this->form_validation->set_rules($row, $key, 'trim|required|xss_clean');
-				endforeach;
-				$this->form_validation->set_error_delimiters(null, null);
+				if($input)
+				{
+					$this->form_validation->set_data($input);
+					foreach($val as $row => $key) :
+						$this->form_validation->set_rules($row, $key, 'trim|required|xss_clean');
+					endforeach;
+					$this->form_validation->set_error_delimiters(null, null);
+	
+					if ($this->form_validation->run() == FALSE) {
+							foreach ($val as $key => $value) {
+								$data['messages'][$key] = form_error($key);
+							}							
+							http_response_code('400');
+						}
+						else
+						{
+							$val = [
+								'parent_id' => $input['id'],
+								'child_id' => $input['child_id']
+							];
+								$wh = ['parent_id'=> $input['id'] ];
+	
+								$cc = $this->mdata->check_all('usm_user',$wh,1);
+	
+								if($cc)
+								{
+								   $cc = $this->mdata->update_all($wh,$val,'usm_organitation_level');
+								   $data = [
+									   'success' =>true,
+									   'message'=>'update organitation success'
+								   ];
+								   http_response_code('200');
+	
+							   }
+							   else
+	
+							   {
+									$data = [
+										'success' =>false,
+										'message'=> "invalid field id"
+									];
+									http_response_code('400');
+							   }
+	
+						}
+					echo json_encode($data);
 
-				if ($this->form_validation->run() == FALSE) {
-						foreach ($val as $key => $value) {
-							$data['messages'][$key] = form_error($key);
-						}							
-						http_response_code('400');
-					}
-					else
-					{
-						$val = [
-							'parent_id' => $input['id'],
-							'child_id' => $input['child_id']
-                        ];
-							$wh = ['parent_id'=> $input['id'] ];
-
-							$cc = $this->mdata->check_all('usm_user',$wh,1);
-
-							if($cc)
-							{
-							   $cc = $this->mdata->update_all($wh,$val,'usm_organitation_level');
-							   $data = [
-								   'success' =>true,
-								   'message'=>'update organitation success'
-							   ];
-							   http_response_code('200');
-
-						   }
-						   else
-
-						   {
-								$data = [
-									'success' =>false,
-									'message'=> "invalid field id"
-								];
-								http_response_code('400');
-						   }
-
-					}
-				echo json_encode($data);
+				}
 	}
 
 	public function delete()

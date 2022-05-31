@@ -41,32 +41,36 @@ class Organitation extends MY_Controller {
 
 		$data = array('success' => false, 'messages' => array());
 		$input = json_decode(trim(file_get_contents('php://input')), true);		
-		$this->form_validation->set_data($input);
-		foreach($val as $row => $key) :
-			$this->form_validation->set_rules($row, $key, 'trim|required|xss_clean');
-		endforeach;
-		$this->form_validation->set_error_delimiters(null, null);
+		if($input)
+		{
 
-		if ($this->form_validation->run() == FALSE) {
-				foreach ($val as $key => $value) {
-					$data['messages'][$key] = form_error($key);
-				}
-				http_response_code('400');
-		  }
-		  else
-		  {
-					$val = [
-						'name' => $input['name'],
-						'code' => $input['code']
-					];
-					$this->mdata->insert_all('csm_organitation',$val);
-					$data = [
-						'success' =>true,
-						'message'=>'create organitation success'
-					];
-					http_response_code('200');
-		  }
-		echo json_encode($data);
+			$this->form_validation->set_data($input);
+			foreach($val as $row => $key) :
+				$this->form_validation->set_rules($row, $key, 'trim|required|xss_clean');
+			endforeach;
+			$this->form_validation->set_error_delimiters(null, null);
+	
+			if ($this->form_validation->run() == FALSE) {
+					foreach ($val as $key => $value) {
+						$data['messages'][$key] = form_error($key);
+					}
+					http_response_code('400');
+			  }
+			  else
+			  {
+						$val = [
+							'name' => $input['name'],
+							'code' => $input['code']
+						];
+						$this->mdata->insert_all('csm_organitation',$val);
+						$data = [
+							'success' =>true,
+							'message'=>'create organitation success'
+						];
+						http_response_code('200');
+			  }
+			echo json_encode($data);
+		}
 	}
 
 	public function show()
@@ -85,50 +89,53 @@ class Organitation extends MY_Controller {
 
 		$data = array('success' => false, 'messages' => array());
 		$input = json_decode(trim(file_get_contents('php://input')), true);		
-		$this->form_validation->set_data($input);
-		foreach($val as $row => $key) :
-			$this->form_validation->set_rules($row, $key, 'trim|required|xss_clean');
-		endforeach;
-		$this->form_validation->set_error_delimiters(null, null);
-
-		if ($this->form_validation->run() == FALSE) {
-				foreach ($val as $key => $value) {
-					$data['messages'][$key] = form_error($key);
-				}							
-				http_response_code('400');
-			}
-			else
-			{
-					$val = [
-						'name' => $input['name'],
-						'code' => $input['code']
-					];
-					$wh = ['id'=> $input['id'] ];
-
-					$cc = $this->mdata->check_all('usm_user',$wh,1);
-
-					if($cc)
-					{
-						$cc = $this->mdata->update_all($wh,$val,'csm_organitation');
-						$data = [
-							'success' =>true,
-							'message'=>'update organitation success'
+		if($input)
+		{
+			$this->form_validation->set_data($input);
+			foreach($val as $row => $key) :
+				$this->form_validation->set_rules($row, $key, 'trim|required|xss_clean');
+			endforeach;
+			$this->form_validation->set_error_delimiters(null, null);
+	
+			if ($this->form_validation->run() == FALSE) {
+					foreach ($val as $key => $value) {
+						$data['messages'][$key] = form_error($key);
+					}							
+					http_response_code('400');
+				}
+				else
+				{
+						$val = [
+							'name' => $input['name'],
+							'code' => $input['code']
 						];
-						http_response_code('200');
-
-					}
-					else
-
-					{
-						$data = [
-							'success' =>false,
-							'message'=> "invalid field id"
-						];
-						http_response_code('400');
-					}
-
-			}
-		echo json_encode($data);
+						$wh = ['id'=> $input['id'] ];
+	
+						$cc = $this->mdata->check_all('usm_user',$wh,1);
+	
+						if($cc)
+						{
+							$cc = $this->mdata->update_all($wh,$val,'csm_organitation');
+							$data = [
+								'success' =>true,
+								'message'=>'update organitation success'
+							];
+							http_response_code('200');
+	
+						}
+						else
+	
+						{
+							$data = [
+								'success' =>false,
+								'message'=> "invalid field id"
+							];
+							http_response_code('400');
+						}
+	
+				}
+			echo json_encode($data);
+		}
 	}
 
 	public function delete()

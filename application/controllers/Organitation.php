@@ -145,7 +145,7 @@ class Organitation extends MY_Controller {
 		
         $data = [
             'success' =>true,
-            'data'=>$da,
+            'message'=>'delete organitation success',
         ];
         http_response_code('200');
 

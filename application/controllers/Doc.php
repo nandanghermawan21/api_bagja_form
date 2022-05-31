@@ -80,7 +80,7 @@ class Doc extends MY_Controller {
 							["bearerAuth"=>[]]
 						],
 						'tags'=>['organitation'],
-						'operationId'=>'Get all organitation',
+						'description'=>'Get all organitation param id null, get specific with param id',
 						'parameters'=> [
 							[
 								'name' => 'id',							
@@ -96,7 +96,14 @@ class Doc extends MY_Controller {
 						],						
 						'responses'=>[
 							'200'=> [
-								'description'=>'Get Success'
+								'description'=>'Get Success',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/org'
+										],
+									]
+								]
 							],
 							'401'=> [
 								'description'=>'Unauthorized',
@@ -139,7 +146,50 @@ class Doc extends MY_Controller {
 						],
 						'responses'=>[
 							'200'=> [
-								'description'=>'Create Success'
+								'description'=>'Create Success',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => true,
+												'message'=>'create organitation success'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
+							],
+							'400'=> [
+								'description'=>'field required',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => false,
+												'message'=>'field required'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
 							],
 							'401'=> [
 								'description'=>'Unauthorized',
@@ -186,7 +236,50 @@ class Doc extends MY_Controller {
 						],
 						'responses'=>[
 							'200'=> [
-								'description'=>'Create Success'
+								'description'=>'Update Success',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => true,
+												'message'=>'update organitation success'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
+							],
+							'400'=> [
+								'description'=>'field required',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => false,
+												'message'=>'field required'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
 							],
 							'401'=> [
 								'description'=>'Unauthorized',
@@ -224,7 +317,37 @@ class Doc extends MY_Controller {
 						],	
 						'responses'=>[
 							'200'=> [
-								'description'=>'Create Success'
+								'description'=>'Delete Success',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => true,
+												'message'=>'delete organitation success'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
+							],	
+							'401'=> [
+								'description'=>'Unauthorized',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/Unauthorized'
+										],
+									]
+								]
 							],
 
 						],
@@ -237,7 +360,7 @@ class Doc extends MY_Controller {
 							["bearerAuth"=>[]]
 						],
 						'tags'=>['level'],
-						'operationId'=>'Get all Level',
+						'description'=>'Get all Level param id null, get specific with param id',
 						'parameters'=> [
 							[
 								'name' => 'id',							
@@ -253,7 +376,14 @@ class Doc extends MY_Controller {
 						],						
 						'responses'=>[
 							'200'=> [
-								'description'=>'Get Success'
+								'description'=>'Get Success',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/level'
+										],
+									]
+								]
 							],
 							'401'=> [
 								'description'=>'Unauthorized',
@@ -300,7 +430,50 @@ class Doc extends MY_Controller {
 						],
 						'responses'=>[
 							'200'=> [
-								'description'=>'Create Success'
+								'description'=>'Create Success',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => true,
+												'message'=>'create level success'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
+							],
+							'400'=> [
+								'description'=>'field required',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => false,
+												'message'=>'field required'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
 							],
 							'401'=> [
 								'description'=>'Unauthorized',
@@ -350,7 +523,50 @@ class Doc extends MY_Controller {
 						],
 						'responses'=>[
 							'200'=> [
-								'description'=>'Create Success'
+								'description'=>'Update Success',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => true,
+												'message'=>'update level success'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
+							],
+							'400'=> [
+								'description'=>'field required',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => false,
+												'message'=>'field required'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
 							],
 							'401'=> [
 								'description'=>'Unauthorized',
@@ -388,8 +604,28 @@ class Doc extends MY_Controller {
 						],	
 						'responses'=>[
 							'200'=> [
-								'description'=>'Create Success'
-							],
+								'description'=>'Delete Success',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => true,
+												'message'=>'delete level success'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
+							],	
 							'401'=> [
 								'description'=>'Unauthorized',
 								'content'=>[
@@ -411,15 +647,16 @@ class Doc extends MY_Controller {
 							["bearerAuth"=>[]]
 						],
 						'tags'=>['Organitation tree'],
-						'operationId'=>'get organitation tree',
+						'description'=>'get All organitation tree param id null, get specific with param id',
 						'parameters'=> [
 							[
 								'name' => 'id',							
 								'description'=> 'id parent',
 								'in'=>'query',
-								'required'=> true,
+								'required'=> false,
 								'schema' => [
-									'type' => 'integer',										
+									'type' => 'integer',		
+									'default'=> null										
 									]			
 							]
 							
@@ -498,7 +735,50 @@ class Doc extends MY_Controller {
 						],
 						'responses'=>[
 							'200'=> [
-								'description'=>'Create Success'
+								'description'=>'Create Success',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => true,
+												'message'=>'create user success'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
+							],
+							'400'=> [
+								'description'=>'field required',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => false,
+												'message'=>'field required'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
 							],
 							'401'=> [
 								'description'=>'Unauthorized',
@@ -521,7 +801,7 @@ class Doc extends MY_Controller {
 							["bearerAuth"=>[]]
 						],
 						'tags'=>['user'],
-						'operationId'=>'Get User with parameter id or All',	
+						'description'=>'Get All User param id null, get specific with param id',	
 						'parameters'=> [
 							[
 								'name' => 'id',							
@@ -612,7 +892,50 @@ class Doc extends MY_Controller {
 						],
 						'responses'=>[
 							'200'=> [
-								'description'=>'Create Success'
+								'description'=>'Update Success',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => true,
+												'message'=>'update user success'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
+							],
+							'400'=> [
+								'description'=>'field required',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => false,
+												'message'=>'field required'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
 							],
 							'401'=> [
 								'description'=>'Unauthorized',
@@ -650,7 +973,27 @@ class Doc extends MY_Controller {
 						],	
 						'responses'=>[
 							'200'=> [
-								'description'=>'Delete Success'
+								'description'=>'Delete Success',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => true,
+												'message'=>'delete user success'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
 							],
 							'401'=> [
 								'description'=>'Unauthorized',
@@ -730,6 +1073,45 @@ class Doc extends MY_Controller {
 						'example'=> [
 							'success' => false,
 							'token'=> 'invalid username or password'
+						],
+						'type'=>'object'
+					],
+					'org' => [
+						'properties'=>[
+							'success' => [
+								'type'=>'string',															
+							],
+							'data' => [
+								'type' => 'array',																		
+							]
+						],
+						'example'=> [
+							'success' => true,
+							'data'=> [
+								'id' => 1,
+								'name'=>'sample',
+								"code"=> "HO"
+							]
+
+						],
+						'type'=>'object'
+					],
+					'level' => [
+						'properties'=>[
+							'success' => [
+								'type'=>'string',															
+							],
+							'data' => [
+								'type' => 'array',																		
+							]
+						],
+						'example'=> [
+							'success' => true,
+							'data'=> [
+								'parent_id' => 1,
+								'child_id'=> 1,								
+							]
+
 						],
 						'type'=>'object'
 					]

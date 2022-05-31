@@ -7,7 +7,7 @@ class Auth extends MY_Controller {
 	public function __construct()
     {
         parent::__construct();		
-		// header('Content-Type: application/json');
+		header('Content-Type: application/json');
     }
 
 	public function login()

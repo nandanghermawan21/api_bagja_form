@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 
-class Api extends MY_Controller {
+class Auth extends MY_Controller {
 
 	public function __construct()
     {
@@ -12,13 +12,13 @@ class Api extends MY_Controller {
 
 	public function login()
 	{
-		$val = [
-			'username' => 'Username',
-			'password' => 'Password'
-		];
+		$val = ['username'=>'username',
+				'password'=>'password'
+				];
 
 		$data = array('success' => false, 'messages' => array());
-
+		$input = json_decode(trim(file_get_contents('php://input')), true);		
+		$this->form_validation->set_data($input);
 		foreach($val as $row => $key) :
 			$this->form_validation->set_rules($row, $key, 'trim|required|xss_clean');
 		endforeach;
@@ -33,16 +33,16 @@ class Api extends MY_Controller {
         } else {
 
 				$user = array (        
-					'username' => $this->input->post('username')        
+					'username' => $input['username']       
 				);
 			
 			  $cek = $this->mdata->check_all('usm_users',$user,1);
 
 			  if($cek)
 			  {
-				if($this->key->openhash($this->input->post('password'),$cek->password))
+				if($this->key->openhash($input['password'],$cek->password))
 				{
-					$c = $this->_createJWToken($this->input->post('username'));
+					$c = $this->_createJWToken($input['username']);
 
 					$data = [
 						'success' =>true,
@@ -70,8 +70,9 @@ class Api extends MY_Controller {
 			  }
 
 	        }
+	        
 
-	        echo json_encode($data);
+		echo json_encode($data);
 	}
 
 

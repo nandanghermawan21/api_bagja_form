@@ -40,20 +40,9 @@ class Doc extends MY_Controller {
 						'tags'=>['auth'],
 						'requestBody'=> [
 							'content'=>[
-								'application/x-www-form-urlencoded'=>[
+								'application/json'=>[
 									'schema'=> [
-										'properties'=>[
-											'username' => [
-												'type'=>'string',
-												'required'=>1,
-											],
-											'password' => [
-												'type'=>'string',
-												'required'=>1,
-											]
-										],
-										'type'=>'object'
-
+										'$ref' => '#/components/schemas/auth'
 									],
 								]
 							]
@@ -71,7 +60,7 @@ class Doc extends MY_Controller {
 					]
 
 				],
-				'/organitation-show'=>[
+				'/organitation'=>[
 					'get'=>[
 						'security'=> [
 							["bearerAuth"=>[]]
@@ -100,7 +89,7 @@ class Doc extends MY_Controller {
 					]
 
 				],
-				'/organitation-create'=>[
+				'/organitation/create'=>[
 					'post'=>[
 						'security'=> [
 							["bearerAuth"=>[]]
@@ -109,16 +98,14 @@ class Doc extends MY_Controller {
 						'operationId'=>'Create organitation',
 						'requestBody'=> [
 							'content'=>[
-								'application/x-www-form-urlencoded'=>[
+								'application/json'=>[
 									'schema'=> [
 										'properties'=>[
 											'name' => [
-												'type'=>'string',
-												'required'=>1,
+												'type'=>'string'											
 											],
 											'code' => [
-												'type'=>'string',
-												'required'=>1,
+												'type'=>'string'												
 											]
 										],
 										'type'=>'object'
@@ -136,7 +123,7 @@ class Doc extends MY_Controller {
 					]
 
 				],
-				'/organitation-update'=>[
+				'/organitation/update'=>[
 					'post'=>[
 						'security'=> [
 							["bearerAuth"=>[]]
@@ -145,20 +132,17 @@ class Doc extends MY_Controller {
 						'operationId'=>'Update organitation',						
 						'requestBody'=> [
 							'content'=>[
-								'application/x-www-form-urlencoded'=>[
+								'application/json'=>[
 									'schema'=> [
 										'properties'=>[
 											'id' => [
-												'type'=>'integer',
-												'required'=>1,
+												'type'=>'integer',												
 											],
 											'name' => [
-												'type'=>'string',
-												'required'=>1,
+												'type'=>'string',												
 											],
 											'code' => [
-												'type'=>'string',
-												'required'=>1,
+												'type'=>'string',												
 											]
 										],
 										'type'=>'object'
@@ -176,7 +160,7 @@ class Doc extends MY_Controller {
 					]
 
 				],
-				'/organitation-delete'=>[
+				'/organitation/delete'=>[
 					'get'=>[
 						'security'=> [
 							["bearerAuth"=>[]]
@@ -242,7 +226,7 @@ class Doc extends MY_Controller {
 						'operationId'=>'Create Level',
 						'requestBody'=> [
 							'content'=>[
-								'application/x-www-form-urlencoded'=>[
+								'application/json'=>[
 									'schema'=> [
 										'properties'=>[
 											'id' => [
@@ -279,7 +263,7 @@ class Doc extends MY_Controller {
 						'operationId'=>'Update Level',						
 						'requestBody'=> [
 							'content'=>[
-								'application/x-www-form-urlencoded'=>[
+								'application/json'=>[
 									'schema'=> [
 										'properties'=>[
 											'id' => [
@@ -310,7 +294,7 @@ class Doc extends MY_Controller {
 					]
 
 				],
-				'/leveldelete'=>[
+				'/level/delete'=>[
 					'get'=>[
 						'security'=> [
 							["bearerAuth"=>[]]
@@ -375,7 +359,7 @@ class Doc extends MY_Controller {
 						'operationId'=>'Create User',
 						'requestBody'=> [
 							'content'=>[
-								'application/x-www-form-urlencoded'=>[
+								'application/json'=>[
 									'schema'=> [
 										'properties'=>[
 											'username' => [
@@ -466,7 +450,7 @@ class Doc extends MY_Controller {
 						'operationId'=>'Update User',
 						'requestBody'=> [
 							'content'=>[
-								'application/x-www-form-urlencoded'=>[
+								'application/json'=>[
 									'schema'=> [
 										'properties'=>[
 											'id' => [
@@ -558,7 +542,21 @@ class Doc extends MY_Controller {
 							'scheme'=>'Bearer',
 							'bearerFormat'=>'JWT',
 						]
+				],
+				'schemas' => [
+					'auth' => [
+						'properties'=>[
+							'username' => [
+								'type'=>'string',												
+							],
+							'password' => [
+								'type'=>'string',												
+							]
+						],
+						'type'=>'object'
+					]
 				]
+
 			]
 		];
 

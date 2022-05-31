@@ -38,8 +38,10 @@ class Organitation extends MY_Controller {
 			'code' => 'code'
 		];
 
-		$data = array('success' => false, 'messages' => array());
 
+		$data = array('success' => false, 'messages' => array());
+		$input = json_decode(trim(file_get_contents('php://input')), true);		
+		$this->form_validation->set_data($input);
 		foreach($val as $row => $key) :
 			$this->form_validation->set_rules($row, $key, 'trim|required|xss_clean');
 		endforeach;
@@ -54,8 +56,8 @@ class Organitation extends MY_Controller {
 		  else
 		  {
 					$val = [
-						'name' => $this->input->post('name'),
-						'code' => $this->input->post('code')
+						'name' => $input['name'],
+						'code' => $input['code']
 					];
 					$this->mdata->insert_all('csm_organitation',$val);
 					$data = [
@@ -75,57 +77,58 @@ class Organitation extends MY_Controller {
 	public function update()
 	{
 
-				$val = [					
-					'id' => 'id',
-					'name' => 'name',
-					'code' => 'code'
-				];
+		$val = [					
+			'id' => 'id',
+			'name' => 'name',
+			'code' => 'code'
+		];
 
-				$data = array('success' => false, 'messages' => array());
-					
-				foreach($val as $row => $key) :
-					$this->form_validation->set_rules($row, $key, 'trim|required|xss_clean');
-				endforeach;
-				$this->form_validation->set_error_delimiters(null, null);
+		$data = array('success' => false, 'messages' => array());
+		$input = json_decode(trim(file_get_contents('php://input')), true);		
+		$this->form_validation->set_data($input);
+		foreach($val as $row => $key) :
+			$this->form_validation->set_rules($row, $key, 'trim|required|xss_clean');
+		endforeach;
+		$this->form_validation->set_error_delimiters(null, null);
 
-				if ($this->form_validation->run() == FALSE) {
-						foreach ($val as $key => $value) {
-							$data['messages'][$key] = form_error($key);
-						}							
-						http_response_code('400');
+		if ($this->form_validation->run() == FALSE) {
+				foreach ($val as $key => $value) {
+					$data['messages'][$key] = form_error($key);
+				}							
+				http_response_code('400');
+			}
+			else
+			{
+					$val = [
+						'name' => $input['name'],
+						'code' => $input['code']
+					];
+					$wh = ['id'=> $input['id'] ];
+
+					$cc = $this->mdata->check_all('usm_user',$wh,1);
+
+					if($cc)
+					{
+						$cc = $this->mdata->update_all($wh,$val,'csm_organitation');
+						$data = [
+							'success' =>true,
+							'message'=>'update organitation success'
+						];
+						http_response_code('200');
+
 					}
 					else
+
 					{
-							$val = [
-								'name' => $this->input->post('name'),
-								'code' => $this->input->post('code')
-							];
-							$wh = ['id'=> $this->input->post('id') ];
-
-							$cc = $this->mdata->check_all('usm_user',$wh,1);
-
-							if($cc)
-							{
-							   $cc = $this->mdata->update_all($wh,$val,'csm_organitation');
-							   $data = [
-								   'success' =>true,
-								   'message'=>'update organitation success'
-							   ];
-							   http_response_code('200');
-
-						   }
-						   else
-
-						   {
-								$data = [
-									'success' =>false,
-									'message'=> "invalid field id"
-								];
-								http_response_code('400');
-						   }
-
+						$data = [
+							'success' =>false,
+							'message'=> "invalid field id"
+						];
+						http_response_code('400');
 					}
-				echo json_encode($data);
+
+			}
+		echo json_encode($data);
 	}
 
 	public function delete()

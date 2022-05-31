@@ -35,7 +35,7 @@ class User extends MY_Controller {
 
 	public function create()
 	{
-             $parent = $this->mdata->ambil('usm_users','id')+1;
+        $parent = $this->mdata->ambil('usm_users','id')+1;
 		$val = [
 			'username' => 'Username',
 			'password' => 'Password',
@@ -47,7 +47,8 @@ class User extends MY_Controller {
 		];
 
 		$data = array('success' => false, 'messages' => array());
-
+		$input = json_decode(trim(file_get_contents('php://input')), true);		
+		$this->form_validation->set_data($input);
 		foreach($val as $row => $key) :
 			$this->form_validation->set_rules($row, $key, 'trim|required|xss_clean');
 		endforeach;
@@ -62,13 +63,13 @@ class User extends MY_Controller {
 		  else 
 		  {
 					$val = [
-						'username' => $this->input->post('username'),
-						'password' => $this->key->lockhash(trim($this->input->post('password'))),
-						'nama' => $this->input->post('nama'),
-                        'alamat' => $this->input->post('alamat'),
-						'nohp' => $this->input->post('nohp'),
-						'email' => $this->input->post('email'),
-						'organitation_id' => $this->input->post('organitation_id'),   
+						'username' => $input['username'],
+						'password' => $this->key->lockhash(trim($input['password'])),
+						'nama' => $input['nama'],
+                        'alamat' => $input['alamat'],
+						'nohp' => $input['nohp'],
+						'email' => $input['email'],
+						'organitation_id' => $input['organitation_id'],   
                         'parent_user_id'=>$parent,                  
 					];
 					$this->mdata->insert_all('usm_users',$val);
@@ -96,7 +97,8 @@ class User extends MY_Controller {
 		];
 
 		$data = array('success' => false, 'messages' => array());
-
+		$input = json_decode(trim(file_get_contents('php://input')), true);		
+		$this->form_validation->set_data($input);
 		foreach($val as $row => $key) :
 			$this->form_validation->set_rules($row, $key, 'trim|required|xss_clean');
 		endforeach;
@@ -111,16 +113,17 @@ class User extends MY_Controller {
 		  else 
 		  {
 					$val = [
-						'username' => $this->input->post('username'),
-						'password' => $this->key->lockhash(trim($this->input->post('password'))),
-						'nama' => $this->input->post('nama'),
-                        'alamat' => $this->input->post('alamat'),
-						'nohp' => $this->input->post('nohp'),
-						'email' => $this->input->post('email'),
-						'organitation_id' => $this->input->post('organitation'),
+						'username' => $input['username'],
+						'password' => $this->key->lockhash(trim($input['password'])),
+						'nama' => $input['nama'],
+						'alamat' => $input['alamat'],
+						'nohp' => $input['nohp'],
+						'email' => $input['email'],
+						'organitation_id' => $input['organitation_id'],   
+						'parent_user_id'=>$parent,                  
 					];
 
-                    $wh = ['id'=> $this->input->post('id') ];
+                    $wh = ['id'=> $input['id'] ];
                     $cc = $this->mdata->check_all('usm_users',$wh,1);
                     if($cc)
                     {

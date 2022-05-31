@@ -39,7 +39,8 @@ class Level extends MY_Controller {
 		];
 
 		$data = array('success' => false, 'messages' => array());
-
+		$input = json_decode(trim(file_get_contents('php://input')), true);		
+		$this->form_validation->set_data($input);
 		foreach($val as $row => $key) :
 			$this->form_validation->set_rules($row, $key, 'trim|required|xss_clean');
 		endforeach;
@@ -54,8 +55,8 @@ class Level extends MY_Controller {
 		  else
 		  {
 					$val = [
-						'parent_id' => $this->input->post('id'),
-						'child_id' => $this->input->post('child_id')
+						'parent_id' => $input['id'],
+						'child_id' => $input['child_id']
 					];
 					$this->mdata->insert_all('usm_organitation_level',$val);
 					$data = [
@@ -81,7 +82,8 @@ class Level extends MY_Controller {
 				];
 
 				$data = array('success' => false, 'messages' => array());
-					
+				$input = json_decode(trim(file_get_contents('php://input')), true);		
+				$this->form_validation->set_data($input);
 				foreach($val as $row => $key) :
 					$this->form_validation->set_rules($row, $key, 'trim|required|xss_clean');
 				endforeach;
@@ -96,10 +98,10 @@ class Level extends MY_Controller {
 					else
 					{
 						$val = [
-                            'parent_id' => $this->input->post('id'),
-                            'child_id' => $this->input->post('child_id')
+							'parent_id' => $input['id'],
+							'child_id' => $input['child_id']
                         ];
-							$wh = ['parent_id'=> $this->input->post('id') ];
+							$wh = ['parent_id'=> $input['id'] ];
 
 							$cc = $this->mdata->check_all('usm_user',$wh,1);
 

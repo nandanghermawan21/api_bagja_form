@@ -49,13 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | Examples:	my-controller/index	-> my_controller/index
 |		my-controller/my-method	-> my_controller/my_method
 */
-$route['default_controller'] = 'Api';
-$route['document']['get'] = 'doc/api';
-$route['auth/login']['post'] = 'api/login';
-$route['organitation-create']['post'] = 'organitation/create';
-$route['organitation-show']['get'] = 'organitation/index';
-$route['organitation-update']['post'] = 'organitation/update';
-$route['organitation-delete']['get'] = 'organitation/delete';
+$route['default_controller'] = 'doc/api';
 $route['404_override'] = '';
 
 $route['translate_uri_dashes'] = FALSE;

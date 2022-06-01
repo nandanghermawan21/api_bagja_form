@@ -19,6 +19,7 @@ class Mdata extends CI_Model {
 	public function insert_all($table,$data)
 	{
 		$this->db->insert($table,$data);
+		return $this->db->affected_rows(); 	
 	}
 
 	public function insert_batch($table,$data)
@@ -30,7 +31,8 @@ class Mdata extends CI_Model {
 	public function update_all($where,$data,$table)
 	{
 		$this->db->where($where);
-		return $this->db->update($table,$data);
+		$this->db->update($table,$data);
+		return $this->db->affected_rows(); 	
 	}
 
 	//tampil data
@@ -44,7 +46,8 @@ class Mdata extends CI_Model {
 	public function delete_all($table,$data)
     {
 		$this->db->where($data);
-		return $this->db->delete($table);    	
+		$this->db->delete($table);   
+		return $this->db->affected_rows(); 	
     }
 
 

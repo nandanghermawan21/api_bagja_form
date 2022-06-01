@@ -35,6 +35,7 @@ class Doc extends MY_Controller {
 				['url'=> base_url() ]
 			],
 			'paths'=> [
+				//auth
 				'/auth/login'=>[
 					'post'=>[
 						'tags'=>['auth'],
@@ -74,6 +75,7 @@ class Doc extends MY_Controller {
 					]
 
 				],
+				//organitation
 				'/organitation'=>[
 					'get'=>[
 						'security'=> [
@@ -354,6 +356,7 @@ class Doc extends MY_Controller {
 					]
 
 				],
+				//level
 				'/level'=>[
 					'get'=>[
 						'security'=> [
@@ -641,6 +644,7 @@ class Doc extends MY_Controller {
 					]
 
 				],
+				//tree
 				'/tree'=>[
 					'get'=>[
 						'security'=> [
@@ -680,6 +684,7 @@ class Doc extends MY_Controller {
 					]
 
 				],
+				//user
 				'/user/create'=>[
 					'post'=>[
 						'security'=> [
@@ -1010,6 +1015,623 @@ class Doc extends MY_Controller {
 					]
 
 				],
+				// collection list
+				'/collection/list'=>[
+					'get'=>[
+						'security'=> [
+							["bearerAuth"=>[]]
+						],
+						'tags'=>['collection list'],
+						'description'=>'Get all collection param id null, get specific with param id',
+						'parameters'=> [
+							[
+								'name' => 'id',							
+								'description'=> 'id collection',
+								'in'=>'query',
+								'required'=> false,
+								'schema' => [
+									'type' => 'integer',	
+									'default'=> null							
+									]			
+							]
+							
+						],						
+						'responses'=>[
+							'200'=> [
+								'description'=>'Get Success',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/collection'
+										],
+									]
+								]
+							],
+							'401'=> [
+								'description'=>'Unauthorized',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/Unauthorized'
+										],
+									]
+								]
+							],
+
+						],
+					]
+
+				],
+				'/collection/list/create'=>[
+					'post'=>[
+						'security'=> [
+							["bearerAuth"=>[]]
+						],
+						'tags'=>['collection list'],
+						'operationId'=>'Create collection',
+						'requestBody'=> [
+							'content'=>[
+								'application/json'=>[
+									'schema'=> [
+										'properties'=>[							
+											'name' => [
+												'type'=>'string',
+												'required'=>true,
+											]
+										],
+										'type'=>'object'
+
+									],
+								]
+							]
+						],
+						'responses'=>[
+							'200'=> [
+								'description'=>'Create Success',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => true,
+												'message'=>'create collection success'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
+							],
+							'400'=> [
+								'description'=>'field required',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => false,
+												'message'=>'field required'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
+							],
+							'401'=> [
+								'description'=>'Unauthorized',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/Unauthorized'
+										],
+									]
+								]
+							],
+
+						],
+					]
+
+				],
+				'/collection/list/update'=>[
+					'post'=>[
+						'security'=> [
+							["bearerAuth"=>[]]
+						],
+						'tags'=>['collection list'],
+						'operationId'=>'Update collection',						
+						'requestBody'=> [
+							'content'=>[
+								'application/json'=>[
+									'schema'=> [
+										'properties'=>[
+											'id' => [
+												'type'=>'integer',
+												'required'=>1,
+											],
+											'name' => [
+												'type'=>'string',
+												'required'=>1,
+											]						
+										],
+										'type'=>'object'
+
+									],
+								]
+							]
+						],
+						'responses'=>[
+							'200'=> [
+								'description'=>'Update Success',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => true,
+												'message'=>'update collection success'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
+							],
+							'400'=> [
+								'description'=>'field required',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => false,
+												'message'=>'field required'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
+							],
+							'401'=> [
+								'description'=>'Unauthorized',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/Unauthorized'
+										],
+									]
+								]
+							],
+
+						],
+					]
+
+				],
+				'/collection/list/delete'=>[
+					'get'=>[
+						'security'=> [
+							["bearerAuth"=>[]]
+						],
+						'tags'=>['collection list'],
+						'description'=>'Delete collection',						
+						'parameters'=> [
+							[
+								'name' => 'id',							
+								'description'=> 'id collection',
+								'in'=>'query',
+								'required'=> true,
+								'schema' => [
+									'type' => 'integer',										
+									]			
+							]
+							
+						],							
+						'responses'=>[
+							'200'=> [
+								'description'=>'Delete Success',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => true,
+												'message'=>'delete collection success'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
+							],	
+							'400'=> [
+								'description'=>'Bad request',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => false,
+												'message'=>'delete collection invalid data'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
+							],	
+							'401'=> [
+								'description'=>'Unauthorized',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/Unauthorized'
+										],
+									]
+								]
+							],
+
+						],
+					]
+
+				],
+
+				// collection data
+				'/collection/data'=>[
+					'get'=>[
+						'security'=> [
+							["bearerAuth"=>[]]
+						],
+						'tags'=>['collection data'],
+						'description'=>'Get all collection param id null, get specific with param id',
+						'parameters'=> [
+							[
+								'name' => 'id',							
+								'description'=> 'id collection',
+								'in'=>'query',
+								'required'=> false,
+								'schema' => [
+									'type' => 'integer',	
+									'default'=> null							
+									]			
+							]
+							
+						],						
+						'responses'=>[
+							'200'=> [
+								'description'=>'Get Success',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/collection'
+										],
+									]
+								]
+							],
+							'401'=> [
+								'description'=>'Unauthorized',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/Unauthorized'
+										],
+									]
+								]
+							],
+
+						],
+					]
+
+				],
+				'/collection/data/create'=>[
+					'post'=>[
+						'security'=> [
+							["bearerAuth"=>[]]
+						],
+						'tags'=>['collection data'],
+						'operationId'=>'Create collection',
+						'requestBody'=> [
+							'content'=>[
+								'application/json'=>[
+									'schema'=> [
+										'properties'=>[							
+											'collection_id' => [
+												'type'=>'integer',
+												'required'=>true,
+											],
+											'label' => [
+												'type'=>'string',
+												'required'=>true,
+											],
+											'value' => [
+												'type'=>'string',
+												'required'=>true,
+											]
+										],
+										'type'=>'object'
+									],
+								]
+							]
+						],
+						'responses'=>[
+							'200'=> [
+								'description'=>'Create Success',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => true,
+												'message'=>'create collection success'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
+							],
+							'400'=> [
+								'description'=>'field required',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => false,
+												'message'=>'field required'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
+							],
+							'401'=> [
+								'description'=>'Unauthorized',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/Unauthorized'
+										],
+									]
+								]
+							],
+
+						],
+					]
+
+				],
+				'/collection/data/update'=>[
+					'post'=>[
+						'security'=> [
+							["bearerAuth"=>[]]
+						],
+						'tags'=>['collection data'],
+						'operationId'=>'Update collection data',						
+						'requestBody'=> [
+							'content'=>[
+								'application/json'=>[
+									'schema'=> [
+										'properties'=>[							
+											'collection_id' => [
+												'type'=>'integer',
+												'required'=>true,
+											],
+											'label' => [
+												'type'=>'string',
+												'required'=>true,
+											],
+											'value' => [
+												'type'=>'string',
+												'required'=>true,
+											]
+										],
+										'type'=>'object'
+									],
+								]
+							]
+						],
+						'responses'=>[
+							'200'=> [
+								'description'=>'Update Success',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => true,
+												'message'=>'update collection data success'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
+							],
+							'400'=> [
+								'description'=>'field required',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => false,
+												'message'=>'update collection data failed'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
+							],
+							'401'=> [
+								'description'=>'Unauthorized',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/Unauthorized'
+										],
+									]
+								]
+							],
+
+						],
+					]
+
+				],
+				'/collection/data/delete'=>[
+					'get'=>[
+						'security'=> [
+							["bearerAuth"=>[]]
+						],
+						'tags'=>['collection data'],
+						'description'=>'Delete collection',						
+						'parameters'=> [
+							[
+								'name' => 'id',							
+								'description'=> 'id collection',
+								'in'=>'query',
+								'required'=> true,
+								'schema' => [
+									'type' => 'integer',										
+									]			
+							]
+							
+						],							
+						'responses'=>[
+							'200'=> [
+								'description'=>'Delete Success',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => true,
+												'message'=>'delete collection data success'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
+							],	
+							'400'=> [
+								'description'=>'Bad request',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'properties'=>[
+												'success' => [
+													'type'=>'string',															
+												],
+												'message' => [
+													'type' => 'string',																		
+												]
+											],
+											'example'=> [
+												'success' => false,
+												'message'=>'delete collection invalid data'
+					
+											],
+											'type'=>'object'
+										],
+									]
+								]
+							],	
+							'401'=> [
+								'description'=>'Unauthorized',
+								'content'=>[
+									'application/json'=>[
+										'schema'=> [
+											'$ref' => '#/components/schemas/Unauthorized'
+										],
+									]
+								]
+							],
+
+						],
+					]
+
+				],
+
+
 			],
 			'components'=>[
 				'securitySchemes'=>[
@@ -1091,6 +1713,25 @@ class Doc extends MY_Controller {
 								'id' => 1,
 								'name'=>'sample',
 								"code"=> "HO"
+							]
+
+						],
+						'type'=>'object'
+					],
+					'collection' => [
+						'properties'=>[
+							'success' => [
+								'type'=>'string',															
+							],
+							'data' => [
+								'type' => 'array',																		
+							]
+						],
+						'example'=> [
+							'success' => true,
+							'data'=> [
+								'id' => 1,
+								'name'=>'sample'						
 							]
 
 						],

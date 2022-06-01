@@ -108,7 +108,7 @@ class Level extends MY_Controller {
 							];
 								$wh = ['parent_id'=> $input['id'] ];
 	
-								$cc = $this->mdata->check_all('usm_user',$wh,1);
+								$cc = $this->mdata->check_all('usm_organitation_level',$wh,1);
 	
 								if($cc)
 								{

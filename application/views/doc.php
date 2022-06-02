@@ -20,7 +20,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <script>
         window.onload = function () {                    
             window.ui = SwaggerUIBundle({                
-                url: "<?=base_url('doc')?>",
+                url: "<?=base_url('api.php')?>",
                 dom_id: "#swagger-ui",
                 deepLinking: true,
                 presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],

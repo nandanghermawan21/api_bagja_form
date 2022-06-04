@@ -1,15 +1,17 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+use chriskacerguis\RestServer\RestController;
 use OpenApi\Annotations as OA;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 
-class Auth extends MY_Controller {
+class Auth extends RestController {
 
 	public function __construct()
     {
         parent::__construct();
-		header('Content-Type: application/json');
 		$this->load->model('Auth_model', 'Auth');
     }
   /**
@@ -37,7 +39,7 @@ class Auth extends MY_Controller {
      *   ),
      * )
      */
-	public function login()
+	public function login_post()
 	{
 		$val = ['username'=>'username',
 				'password'=>'password'
@@ -58,7 +60,7 @@ class Auth extends MY_Controller {
 					foreach ($val as $key => $value) {
 						$data['messages'][$key] = form_error($key);
 					}
-					http_response_code('400');
+						$this->response($data,400);
 
 			} else {
 
@@ -79,7 +81,7 @@ class Auth extends MY_Controller {
 							'success' =>true,
 							'token'=>$c
 						];
-						http_response_code('200');
+							$this->response($data,200);
 					}
 					else
 					{
@@ -87,7 +89,7 @@ class Auth extends MY_Controller {
 							'success' =>false,
 							'message'=>'invalid username or password'
 						];
-						http_response_code('400');
+							$this->response($data,400);
 					}
 
 				  }
@@ -97,13 +99,10 @@ class Auth extends MY_Controller {
 						'success' =>false,
 						'message'=>'invalid username or password'
 					];
-					http_response_code('400');
+					$this->response($data,400);
 				  }
 
 				}
-
-
-			echo json_encode($data);
 		}
 	}
 

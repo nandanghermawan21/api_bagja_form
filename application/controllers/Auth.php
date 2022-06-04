@@ -106,4 +106,16 @@ class Auth extends RestController {
 		}
 	}
 
+		function _createJWToken($user)
+    {        
+        $payload = [
+            'iat' => intval(microtime(true)),
+            'exp' => intval(microtime(true)) + (12 * (60 * 60 * 1000)),
+            // 'exp' => intval(microtime(true)) + (60),
+            'uid' => $user,
+        ];
+
+        return JWT::encode($payload, self::$secret, 'HS256');
+    }
+
 }

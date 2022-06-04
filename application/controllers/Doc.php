@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 
-class Doc extends MY_Controller {
+class Doc extends CI_Controller {
 
 	public function __construct()
     {
@@ -12,7 +12,7 @@ class Doc extends MY_Controller {
 	public function index()
 	{
 		/**
-		 * @OA\Info(title="Mockup Api Survey", version="0.1")		 
+		 * @OA\Info(title="Mockup Api Survey", version="0.1")				 
 		 * @OA\SecurityScheme(
 		*      securityScheme="bearerAuth",
 		*      in="header",

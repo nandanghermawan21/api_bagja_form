@@ -11,7 +11,37 @@ class Organitation extends MY_Controller {
 		header('Content-Type: application/json');
     }
 
-	public function index()
+	  /**
+     * @OA\Get(
+     *     path="/organitation",
+     *     tags={"organitation"},
+	 * 	   description="Get all organitation param id null, get specific with param id",
+	 *     @OA\Parameter(
+     *       name="id",
+	 *       description="id organitation",
+     *       in="query",
+     *       @OA\Schema(type="integer",default=null)
+     *   ),
+     *    @OA\Response(response="200", 
+	 * 		description="Success",
+	 *      @OA\JsonContent(     
+     *          @OA\Property(property="message",type="boolean"),
+     *          @OA\Property(property="data",type="array",
+	 *          @OA\Items(
+	 *         @OA\Property(property="id", type="integer", default=1),
+     *         @OA\Property(property="name", type="string", default="sample"),
+	 *         @OA\Property(property="code", type="string", default="HO"),
+	 * 			)),
+     *     ),
+	 * ),
+     *    @OA\Response(response="401", description="Unauthorized"),
+	 *   security={{"bearerAuth": {}}},
+     * )
+     */
+
+
+
+	public function index_get()
 	{
 		$id = $this->input->get('id');
 		if($id == null)
@@ -26,132 +56,7 @@ class Organitation extends MY_Controller {
             'success' =>true,
             'data'=>$da,
         ];
-        http_response_code('200');
-
-		echo json_encode($data);
+		$this->response($data,200);
 	}
-
-	public function create()
-	{
-		$val = [
-			'name' => 'name',
-			'code' => 'code'
-		];
-
-
-		$data = array('success' => false, 'messages' => array());
-		$input = json_decode(trim(file_get_contents('php://input')), true);		
-		if($input)
-		{
-
-			$this->form_validation->set_data($input);
-			foreach($val as $row => $key) :
-				$this->form_validation->set_rules($row, $key, 'trim|required|xss_clean');
-			endforeach;
-			$this->form_validation->set_error_delimiters(null, null);
-	
-			if ($this->form_validation->run() == FALSE) {
-					foreach ($val as $key => $value) {
-						$data['messages'][$key] = form_error($key);
-					}
-					http_response_code('400');
-			  }
-			  else
-			  {
-						$val = [
-							'name' => $input['name'],
-							'code' => $input['code']
-						];
-						$this->mdata->insert_all('csm_organitation',$val);
-						$data = [
-							'success' =>true,
-							'message'=>'create organitation success'
-						];
-						http_response_code('200');
-			  }
-			echo json_encode($data);
-		}
-	}
-
-	public function show()
-	{
-
-	}
-
-	public function update()
-	{
-
-		$val = [					
-			'id' => 'id',
-			'name' => 'name',
-			'code' => 'code'
-		];
-
-		$data = array('success' => false, 'messages' => array());
-		$input = json_decode(trim(file_get_contents('php://input')), true);		
-		if($input)
-		{
-			$this->form_validation->set_data($input);
-			foreach($val as $row => $key) :
-				$this->form_validation->set_rules($row, $key, 'trim|required|xss_clean');
-			endforeach;
-			$this->form_validation->set_error_delimiters(null, null);
-	
-			if ($this->form_validation->run() == FALSE) {
-					foreach ($val as $key => $value) {
-						$data['messages'][$key] = form_error($key);
-					}							
-					http_response_code('400');
-				}
-				else
-				{
-						$val = [
-							'name' => $input['name'],
-							'code' => $input['code']
-						];
-						$wh = ['id'=> $input['id'] ];
-	
-						$cc = $this->mdata->check_all('usm_user',$wh,1);
-	
-						if($cc)
-						{
-							$cc = $this->mdata->update_all($wh,$val,'csm_organitation');
-							$data = [
-								'success' =>true,
-								'message'=>'update organitation success'
-							];
-							http_response_code('200');
-	
-						}
-						else
-	
-						{
-							$data = [
-								'success' =>false,
-								'message'=> "invalid field id"
-							];
-							http_response_code('400');
-						}
-	
-				}
-			echo json_encode($data);
-		}
-	}
-
-	public function delete()
-	{
-		$id = $this->input->get('id');
-		$da = $this->mdata->delete_all('csm_organitation',['id'=>$id]);
-		
-        $data = [
-            'success' =>true,
-            'message'=>'delete organitation success',
-        ];
-        http_response_code('200');
-
-		echo json_encode($data);
-	}
-
-
 
 }

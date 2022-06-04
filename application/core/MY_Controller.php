@@ -1,10 +1,11 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+use chriskacerguis\RestServer\RestController;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
-class MY_Controller extends CI_Controller {
+class MY_Controller extends RestController {
 
   private static $secret = 'sadasdkahdjabdjbdeydgbasdabdan';
 
@@ -50,8 +51,7 @@ class MY_Controller extends CI_Controller {
             'success' =>false,
             'message'=>'Unauthorized'
           ];            
-          http_response_code('401');
-          echo json_encode($data);
+          $this->response($data,401);
           die();
         }
         else
@@ -66,8 +66,7 @@ class MY_Controller extends CI_Controller {
           'success' =>false,
           'message'=>'Unauthorized'
         ];            
-        http_response_code('401');
-        echo json_encode($data);
+        $this->response($data,401);
         die();
       }
       

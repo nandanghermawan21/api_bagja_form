@@ -2,19 +2,16 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 use OpenApi\Annotations as OA;
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 
 
-class Auth extends MY_Controller {
-
-	private static $secret = 'sadasdkahdjabdjbdeydgbasdabdan';
+class Auth extends MY_Controller {	
 
 	public function __construct()
     {
-        parent::__construct();
-		$this->load->model('Auth_model', 'Auth');
+        parent::__construct();		
+		$this->load->model('Auth_model', 'auth');
     }
+
   /**
      * @OA\Post(
      *     path="/auth/login",
@@ -22,8 +19,7 @@ class Auth extends MY_Controller {
      *    @OA\Response(response="200",
 	 * 		description="Success",
 	 *      @OA\JsonContent(
-     *          @OA\Property(property="status",type="boolean"),
-     *          @OA\Property(property="token",default="eyJ0eXAiOiJKV1QiLCJhbxxxxxxxxx",type="string"),
+     *		ref="#/components/schemas/AuthModel"
      *     ),
 	 * ),
      *    @OA\Response(response="400", description="required field",
@@ -64,13 +60,12 @@ class Auth extends MY_Controller {
 						$this->response($data,400);
 
 			} else {
-
-					$auth = new Auth_model();
+						
 					$user = array (
 						'username' => $input['username']
 					);
 
-				  $cek = $auth->login($user);
+				  $cek = $this->auth->login($user);
 
 				  if($cek)
 				  {
@@ -78,11 +73,11 @@ class Auth extends MY_Controller {
 					{
 						$c = $this->_createJWToken($input['username']);
 
-						$data = [
-							'success' =>true,
-							'token'=>$c
-						];
-							$this->response($data,200);
+						$res = (array) $cek;
+						unset($res['parent_user_id']);
+						$token = ['token'=>$c];
+						$data = array_merge($res,$token);						
+						$this->response($data,200);
 					}
 					else
 					{

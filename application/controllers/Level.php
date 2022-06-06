@@ -7,38 +7,86 @@ class Level extends MY_Controller {
 	public function __construct()
     {
         parent::__construct();
-        $this->_authenticate();
-		header('Content-Type: application/json');   
+        $this->_authenticate();		
+
+		$this->load->model('Level_model', 'level');
     }
 
-	public function index()
+
+		/**
+     * @OA\Get(
+     *     path="/level",
+     *     tags={"level"},
+	 * 	   description="Get all Level param id null, get specific with param id",
+	 *     @OA\Parameter(
+     *       name="parent_id",
+	 *       description="Parent id",
+     *       in="query",
+     *       @OA\Schema(type="integer",default=null)
+     *   ),
+	 * security={{"bearerAuth": {}}},
+	 *    @OA\Response(response="401", description="Unauthorized"),
+     *    @OA\Response(response="200", 
+	 * 		description="Success",
+     *      @OA\MediaType(
+     *         mediaType="application/json",
+     *         @OA\Schema(type="array",
+     *             @OA\Items(type="object",
+	 *				ref="#/components/schemas/CollectionModelList"               
+     *             )
+     *         ),
+     *     ),
+     *   ),
+	 * )
+     */
+
+	public function index_get()
 	{
 		$id = $this->input->get('id');
 		if($id == null)
 		{
-			$da = $this->mdata->view_all('usm_organitation_level');
+			$da = $this->level->view(null);
 		}
 		else
 		{
-			$da = $this->mdata->view_where('usm_organitation_level',['parent_id'=>$id]);
+			$da = $this->level->view(['id'=>$id]);
 		}
-        $data = [
-            'success' =>true,
-            'data'=>$da,
-        ];
-        http_response_code('200');
 
-		echo json_encode($data);
+		$this->response($da,200);
 	}
 
-	public function create()
+	/**
+     * @OA\Post(
+     *     path="/level/create",
+     *     tags={"level"},
+     *    @OA\Response(response="200",
+	 * 		description="Success",
+	 *      @OA\JsonContent(
+     *		ref="#/components/schemas/LevelModel"
+     *     ),
+	 * ),
+     *    @OA\Response(response="400", description="required field",
+	 *       @OA\JsonContent(
+     *       ref="#/components/schemas/required"
+     *     ),
+	 * ),
+     *    @OA\RequestBody(
+     *      required=true,
+	 *      @OA\JsonContent(
+     *		ref="#/components/schemas/LevelModel"
+     *     ),
+     *   ),
+	 *   security={{"bearerAuth": {}}},
+     * )
+     */
+
+	public function create_post()
 	{
 		$val = [
-			'id' => 'id',
-			'child_id' => 'child'
+			'parent_id' => 'parent id',
+			'child_id' => 'child id'
 		];
-
-		$data = array('success' => false, 'messages' => array());
+		
 		$input = json_decode(trim(file_get_contents('php://input')), true);		
 		if($input)
 		{
@@ -50,41 +98,65 @@ class Level extends MY_Controller {
 	
 			if ($this->form_validation->run() == FALSE) {
 					foreach ($val as $key => $value) {
-						$data['messages'][$key] = form_error($key);
+						$data[$key] = form_error($key);
 					}
-					http_response_code('400');
+					$this->response($data,400);
 			  }
 			  else
-			  {
-						$val = [
-							'parent_id' => $input['id'],
-							'child_id' => $input['child_id']
-						];
-						$this->mdata->insert_all('usm_organitation_level',$val);
-						$data = [
-							'success' =>true,
-							'message'=>'create level success'
-						];
-						http_response_code('200');
-			  }
-			echo json_encode($data);
+			  {					
+						$cc = $this->level->insert($input);
+						if($cc > 0)
+						{							
+							$this->response($input,200);
+						}
+						else
+						{
+	
+							$data = [
+								'success' =>false,
+								'message'=>'create level failed'
+							];
+
+							$this->response($data,400);
+
+						}
+			  }			
 		}
 	}
 
-	public function show()
+	/**
+     * @OA\Post(
+     *     path="/level/update",
+     *     tags={"level"},
+     *    @OA\Response(response="200",
+	 * 		description="Success",
+	 *      @OA\JsonContent(
+     *		ref="#/components/schemas/LevelModel"
+     *     ),
+	 * ),
+     *    @OA\Response(response="400", description="required field",
+	 *       @OA\JsonContent(
+     *       ref="#/components/schemas/required"
+     *     ),
+	 * ),
+     *    @OA\RequestBody(
+     *      required=true,
+	 *      @OA\JsonContent(
+     *		ref="#/components/schemas/LevelModel"
+     *     ),
+     *   ),
+	 *   security={{"bearerAuth": {}}},
+     * )
+     */
+
+	public function update_post()
 	{
 
-	}
-
-	public function update()
-	{
-
-				$val = [					
-					'id' => 'id',
-					'chid_id' => 'child'					
+				$val = [
+					'parent_id' => 'parent id',
+					'child_id' => 'child id'
 				];
-
-				$data = array('success' => false, 'messages' => array());
+				
 				$input = json_decode(trim(file_get_contents('php://input')), true);		
 				if($input)
 				{
@@ -96,28 +168,22 @@ class Level extends MY_Controller {
 	
 					if ($this->form_validation->run() == FALSE) {
 							foreach ($val as $key => $value) {
-								$data['messages'][$key] = form_error($key);
+								$data[$key] = form_error($key);
 							}							
-							http_response_code('400');
+							$this->response($data,400);
 						}
 						else
 						{
-							$val = [
-								'parent_id' => $input['id'],
+							$val = [								
 								'child_id' => $input['child_id']
 							];
-								$wh = ['parent_id'=> $input['id'] ];
+								$wh = ['parent_id'=> $input['parent_id'] ];
 	
-								$cc = $this->mdata->check_all('usm_organitation_level',$wh,1);
+								$cc = $this->level->update($wh,$val);
 	
-								if($cc)
-								{
-								   $cc = $this->mdata->update_all($wh,$val,'usm_organitation_level');
-								   $data = [
-									   'success' =>true,
-									   'message'=>'update organitation success'
-								   ];
-								   http_response_code('200');
+								if($cc > 0)
+								{	
+								   $this->response($input,200);
 	
 							   }
 							   else
@@ -125,9 +191,9 @@ class Level extends MY_Controller {
 							   {
 									$data = [
 										'success' =>false,
-										'message'=> "invalid field id"
+										'message'=> "invalid field update lvel"
 									];
-									http_response_code('400');
+									$this->response($data,400);
 							   }
 	
 						}
@@ -136,18 +202,43 @@ class Level extends MY_Controller {
 				}
 	}
 
-	public function delete()
-	{
-		$id = $this->input->get('id');
-		$da = $this->mdata->delete_all('usm_organitation_level',['parent_id'=>$id]);
-		
-        $data = [
-            'success' =>true,
-            'message'=>'delete level success',
-        ];
-        http_response_code('200');
+	/**
+     * @OA\Get(
+     *     path="/level/remove",
+     *     tags={"level"},	 
+	 *     @OA\Parameter(
+     *       name="parent_id",
+	 *       description="id level",
+     *       in="query",
+	 * 		 required=true,
+     *       @OA\Schema(type="integer",default=null)
+     *   ),
+	 * security={{"bearerAuth": {}}},
+	 *    @OA\Response(response="401", description="Unauthorized"),
+     *    @OA\Response(response="200", 
+	 * 		description="Success",
+	 *      @OA\JsonContent(     
+ 	 *         @OA\Property(property="parent_id", type="integer", default=0),
+     *     ),
+     *   ),
+	 * )
+     */
 
-		echo json_encode($data);
+	public function remove_get()
+	{
+		$id = $this->input->get('parent_id');
+		$da = $this->level->delete(['parent_id'=>$id]);
+
+		if($da > 0)
+		{
+			$data = ['id'=>$id];
+			$this->response($data, 200);
+		}
+		else
+		{
+			$data = ['status'=>false, 'message'=> 'delete parent id '.$id.' failed'];
+			$this->response($data, 400);
+		}
 	}
 
 

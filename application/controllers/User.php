@@ -8,34 +8,120 @@ class User extends MY_Controller {
     {
         parent::__construct();		
         $this->_authenticate();
-		header('Content-Type: application/json');
+		$this->load->model('User_model', 'user');
     }
 
-	public function index()
+
+
+	/**
+     * @OA\Get(
+     *     path="/user",
+     *     tags={"user"},
+	 * 	   description="Get all user param id null, get specific with param id",
+	 *     @OA\Parameter(
+     *       name="id",
+	 *       description="user id",
+     *       in="query",
+     *       @OA\Schema(type="integer",default=null)
+     *   ),
+	 * security={{"bearerAuth": {}}},
+	 *    @OA\Response(response="401", description="Unauthorized"),
+     *    @OA\Response(response="200", 
+	 * 		description="Success",
+     *      @OA\MediaType(
+     *         mediaType="application/json",
+     *         @OA\Schema(type="array",
+     *             @OA\Items(type="object",
+	 *				ref="#/components/schemas/UserModel"               
+     *             )
+     *         ),
+     *     ),
+     *   ),
+	 * )
+     */
+
+	public function index_get()
 	{		
 
         $id = $this->input->get('id');
 		if($id == null)
 		{
-			$da = $this->mdata->view_all('usm_users');
+			$da = $this->user->view();
 		}
 		else
 		{
-			$da = $this->mdata->view_where('usm_users',['id'=>$id]);
-		}
-        
-        $data = [
-            'success' =>true,
-            'data'=>$da,
-        ];
-        http_response_code('200');
+			$da = $this->user->view(['id'=>$id]);
+		}        
 
-		echo json_encode($data);
+		$this->response($da,200);
 	}
 
-	public function create()
-	{
-        $parent = $this->mdata->ambil('usm_users','id')+1;
+	/**
+     * @OA\Get(
+     *     path="/user/org",
+     *     tags={"user"},
+	 * 	   description="Get all user param id null, get specific with param id",
+	 *     @OA\Parameter(
+     *       name="id",
+	 *       description="id organitation",
+	 *       required=true,
+     *       in="query",
+     *       @OA\Schema(type="integer",default=null)
+     *   ),
+	 * security={{"bearerAuth": {}}},
+	 *    @OA\Response(response="401", description="Unauthorized"),
+     *    @OA\Response(response="200", 
+	 * 		description="Success",
+     *      @OA\MediaType(
+     *         mediaType="application/json",
+     *         @OA\Schema(type="array",
+     *             @OA\Items(type="object",
+	 *				ref="#/components/schemas/UserOrg"               
+     *             )
+     *         ),
+     *     ),
+     *   ),
+	 * )
+     */
+
+	public function org_get()
+	{		
+
+        $id = $this->input->get('id');
+		$da = $this->user->org(['csm_organitation.id'=>$id]);
+
+		$this->response($da,200);
+	}
+
+
+	/**
+     * @OA\Post(
+     *     path="/user/create",
+     *     tags={"user"},
+     *    @OA\Response(response="200",
+	 * 		description="Success",
+	 *      @OA\JsonContent(
+     *		ref="#/components/schemas/UserModel"
+     *     ),
+	 * ),
+     *    @OA\Response(response="400", description="required field",
+	 *       @OA\JsonContent(
+     *       ref="#/components/schemas/required"
+     *     ),
+	 * ),
+     *    @OA\RequestBody(
+     *      required=true,
+	 *      @OA\JsonContent(
+     *		ref="#/components/schemas/UserInput"
+     *     ),
+     *   ),
+	 *   security={{"bearerAuth": {}}},
+     * )
+     */
+
+	public function create_post()
+	{        
+
 		$val = [
 			'username' => 'Username',
 			'password' => 'Password',
@@ -43,29 +129,38 @@ class User extends MY_Controller {
             'alamat' => 'Alamat',
 			'nohp' => 'No HP',
 			'email' => 'Email',
-			'organitation_id' => 'organitation_id',        
+			'organitation_id' => 'organitation_id',   
+			'parent_user_id' => 'parent_user_id',        
 		];
-
-		$data = array('success' => false, 'messages' => array());
-		$input = json_decode(trim(file_get_contents('php://input')), true);		
+		
+		$input = json_decode(trim(file_get_contents('php://input')), true);	
+		
+			
 		if($input)
 		{
 
 			$this->form_validation->set_data($input);
 			foreach($val as $row => $key) :
-				$this->form_validation->set_rules($row, $key, 'trim|required|xss_clean');
+				if($row == 'email')
+				{
+					$this->form_validation->set_rules($row, $key, 'trim|required|valid_email|xss_clean');
+				}
+				else
+				{
+					$this->form_validation->set_rules($row, $key, 'trim|required|xss_clean');
+				}
 			endforeach;
 			$this->form_validation->set_error_delimiters(null, null);
 	
 			if ($this->form_validation->run() == FALSE) {
 					foreach ($val as $key => $value) {
-						$data['messages'][$key] = form_error($key);
+						$data[$key] = form_error($key);
 					}
-					http_response_code('400');
+					$this->response($data,400);
 			  } 
 			  else 
 			  {
-						$val = [
+						$field = [
 							'username' => $input['username'],
 							'password' => $this->key->lockhash(trim($input['password'])),
 							'nama' => $input['nama'],
@@ -73,53 +168,81 @@ class User extends MY_Controller {
 							'nohp' => $input['nohp'],
 							'email' => $input['email'],
 							'organitation_id' => $input['organitation_id'],   
-							'parent_user_id'=>$parent,                  
+							'parent_user_id'=>$input['parent_user_id'],                  
 						];
-						$this->mdata->insert_all('usm_users',$val);
-						$data = [
-							'success' =>true,
-							'message'=>'Insert users sucess'
-						];
-						http_response_code('200');						
-			  }		
-			echo json_encode($data);
+						$id = $this->user->insert($field);
+						$da = array_merge(['id'=>$id],$field);
+						$this->response($da,200);			
+												
+			  }					
 		}
 	}
 
-    public function update()
+	/**
+     * @OA\Post(
+     *     path="/user/update",
+     *     tags={"user"},
+     *    @OA\Response(response="200",
+	 * 		description="Success",
+	 *      @OA\JsonContent(
+     *		ref="#/components/schemas/UserModel"
+     *     ),
+	 * ),
+     *    @OA\Response(response="400", description="required field",
+	 *       @OA\JsonContent(
+     *       ref="#/components/schemas/required"
+     *     ),
+	 * ),
+     *    @OA\RequestBody(
+     *      required=true,
+	 *      @OA\JsonContent(
+     *		ref="#/components/schemas/UserModel"
+     *     ),
+     *   ),
+	 *   security={{"bearerAuth": {}}},
+     * )
+     */
+
+    public function update_post()
 	{
 		$val = [
-            'id' => 'id',
+			"id" => "id",
 			'username' => 'Username',
 			'password' => 'Password',
 			'nama' => 'Nama',
             'alamat' => 'Alamat',
 			'nohp' => 'No HP',
 			'email' => 'Email',
-			'organitation_id' => 'organitation',
-            'parent_user_id' => 'parante',
+			'organitation_id' => 'organitation_id',   
+			'parent_user_id' => 'parent_user_id',        
 		];
-
-		$data = array('success' => false, 'messages' => array());
+				
 		$input = json_decode(trim(file_get_contents('php://input')), true);		
 		if($input)
 		{
 
 			$this->form_validation->set_data($input);
 			foreach($val as $row => $key) :
-				$this->form_validation->set_rules($row, $key, 'trim|required|xss_clean');
+				if($row == 'email')
+				{
+					$this->form_validation->set_rules($row, $key, 'trim|required|valid_email|xss_clean');
+				}
+				else
+				{
+					$this->form_validation->set_rules($row, $key, 'trim|required|xss_clean');
+				}
 			endforeach;
 			$this->form_validation->set_error_delimiters(null, null);
 	
 			if ($this->form_validation->run() == FALSE) {
 					foreach ($val as $key => $value) {
-						$data['messages'][$key] = form_error($key);
+						$data[$key] = form_error($key);
 					}
-					http_response_code('400');
+					$this->response($data,400);	
 			  } 
 			  else 
 			  {
-						$val = [
+						$field = [
 							'username' => $input['username'],
 							'password' => $this->key->lockhash(trim($input['password'])),
 							'nama' => $input['nama'],
@@ -127,46 +250,67 @@ class User extends MY_Controller {
 							'nohp' => $input['nohp'],
 							'email' => $input['email'],
 							'organitation_id' => $input['organitation_id'],   
-							'parent_user_id'=>$parent,                  
+							'parent_user_id'=>$input['parent_user_id'],                  						           
 						];
 	
 						$wh = ['id'=> $input['id'] ];
-						$cc = $this->mdata->check_all('usm_users',$wh,1);
-						if($cc)
-						{
-							$cc = $this->mdata->update_all($wh,$val,'usm_users');
-							$data = [
-								'success' =>true,
-								'message'=>'update user success'
-							];
-							http_response_code('200');
+						$cc = $this->user->update($wh,$field);
+						if($cc > 0)
+						{						
+							$da = array_merge(['id'=>$input['id']],$field);														
+							$this->response($da,200);	
 						}
 						else
 						{
 							$data = [
 								'success' =>false,
-								'message'=> "invalid field id"
+								'message'=> "invalid field user update"
 							];
-							http_response_code('400');
+							$this->response($data,400);	
 						}				
 			  }		
 			echo json_encode($data);
 		}
 	}
-
-    public function delete()
+	
+	/**
+     * @OA\Get(
+     *     path="/user/remove",
+     *     tags={"user"},	 
+	 *     @OA\Parameter(
+     *       name="id",
+	 * 		 required=true,
+	 *       description="user id",
+     *       in="query",
+     *       @OA\Schema(type="integer",default=null)
+     *   ),
+	 * security={{"bearerAuth": {}}},
+	 *    @OA\Response(response="401", description="Unauthorized"),
+     *    @OA\Response(response="200", 
+	 * 		description="Success",
+	 *      @OA\JsonContent(     
+ 	 *         @OA\Property(property="id", type="integer", default=0),
+     *     ),
+     *   ),
+	 * )
+     */
+    public function remove_get()
 	{
 		$id = $this->input->get('id');
-		$da = $this->mdata->delete_all('usm_users',['id'=>$id]);
+		$da = $this->user->delete(['id'=>$id]);
 		
-        $data = [
-            'success' =>true,
-            'message'=>'delete user success',
-        ];
-        http_response_code('200');
-
-		echo json_encode($data);
+		if($da > 0)
+		{
+			$data = ['id'=>$id];
+			$this->response($data, 200);
+		}
+		else
+		{
+			$data = ['status'=>false, 'message'=> 'delete user id '.$id.' failed'];
+			$this->response($data, 400);
+		}	
 	}
+
 
 	
 

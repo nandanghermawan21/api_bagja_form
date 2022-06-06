@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'd2ce63fb3f57de30ff05dcc64d52b38294a6fd49',
+        'reference' => '519d9632a5b3cd2f07269618bfc9988756ee71bf',
         'name' => '__root__',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'd2ce63fb3f57de30ff05dcc64d52b38294a6fd49',
+            'reference' => '519d9632a5b3cd2f07269618bfc9988756ee71bf',
             'dev_requirement' => false,
         ),
         'chriskacerguis/codeigniter-restserver' => array(

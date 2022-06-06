@@ -7,34 +7,12 @@ class Collection extends MY_Controller {
 	public function __construct()
     {
         parent::__construct();
-        $this->_authenticate();
-		header('Content-Type: application/json');   
+        $this->_authenticate();		
+
+		$this->load->model('Collection_model', 'collection');
     }
 
-	public function index()
-	{
-		$id = $this->input->get('id');
-        $tab  = array ('sys_collection','sys_collection_data');
-        $sama   = array (null,'sys_collection.id=sys_collection_data.collection_id');     
-        $wh = ['collection_id'=>$id];
-		if($id == null)
-		{
-            $da = $this->mdata->join_all($tab,$sama,0);
-		}
-		else
-		{
-			$da = $this->mdata->join_all($tab,$sama,$wh);
-		}
-        $data = [
-            'success' =>true,
-            'data'=>$da,
-        ];
-        http_response_code('200');
-
-		echo json_encode($data);
-	}
-
-	public function list()
+	public function list_get()
 	{
 		$uri = $this->uri->segment(3);
         
@@ -44,14 +22,8 @@ class Collection extends MY_Controller {
             case '':
                 $this->_show();
                 break;           
-            case 'create':
-                $this->_create();
-                break;
-            case 'update':
-                $this->_update();
-                break;
             case 'delete':
-                $this->_delete();
+                $this->_remove();
                 break;
             default:
                 show_404();
@@ -59,33 +31,94 @@ class Collection extends MY_Controller {
         }
 	}
 
+	public function list_post()
+	{
+		$uri = $this->uri->segment(3);
+        
+        switch ($uri) {                               
+            case 'create':
+                $this->_create();
+                break;
+            case 'update':
+                $this->_update();
+                break;
+            default:
+                show_404();
+                break;
+        }
+	}
+
+	/**
+     * @OA\Get(
+     *     path="/collection/list",
+     *     tags={"collection"},
+	 * 	   description="Get all collection list param id null, get specific with param id",
+	 *     @OA\Parameter(
+     *       name="id",
+	 *       description="id list",
+     *       in="query",
+     *       @OA\Schema(type="integer",default=null)
+     *   ),
+	 * security={{"bearerAuth": {}}},
+	 *    @OA\Response(response="401", description="Unauthorized"),
+     *    @OA\Response(response="200", 
+	 * 		description="Success",
+     *      @OA\MediaType(
+     *         mediaType="application/json",
+     *         @OA\Schema(type="array",
+     *             @OA\Items(type="object",
+	 *				ref="#/components/schemas/CollectionModelList"               
+     *             )
+     *         ),
+     *     ),
+     *   ),
+	 * )
+     */
     public function _show()
     {
         $id = $this->input->get('id');
 		if($id == null)
 		{
-			$da = $this->mdata->view_all('sys_collection');
+			$da = $this->collection->view(null,'sys_collection');
 		}
 		else
 		{
-			$da = $this->mdata->view_where('sys_collection',['id'=>$id]);
+			$da = $this->collection->view(['id'=>$id],'sys_collection');
 		}
-        $data = [
-            'success' =>true,
-            'data'=>$da,
-        ];
-        http_response_code('200');
-
-		echo json_encode($data);
+		$this->response($da, 200);
     }
+
+	/**
+     * @OA\Post(
+     *     path="/collection/list/create",
+     *     tags={"collection"},
+     *    @OA\Response(response="200",
+	 * 		description="Success",
+	 *      @OA\JsonContent(
+     *		ref="#/components/schemas/CollectionModelList"
+     *     ),
+	 * ),
+     *    @OA\Response(response="400", description="required field",
+	 *       @OA\JsonContent(
+     *       ref="#/components/schemas/required"
+     *     ),
+	 * ),
+     *    @OA\RequestBody(
+     *      required=true,
+	 *      @OA\JsonContent(
+     *		ref="#/components/schemas/collectionInputList"
+     *     ),
+     *   ),
+	 *   security={{"bearerAuth": {}}},
+     * )
+     */
 
     public function _create()
 	{
 		$val = [			
 			'name' => 'name'
 		];
-
-		$data = array('success' => false, 'messages' => array());
+		
 		$input = json_decode(trim(file_get_contents('php://input')), true);		
 		if($input)
 		{
@@ -98,25 +131,44 @@ class Collection extends MY_Controller {
 			if ($this->form_validation->run() == FALSE) 
             {
 					foreach ($val as $key => $value) {
-						$data['messages'][$key] = form_error($key);
+						$data[$key] = form_error($key);
 					}
-					http_response_code('400');
+					$this->response($data,400);
 			  }
 			  else
 			  {
-						$val = [							
-							'name' => $input['name']
-						];
-						$this->mdata->insert_all('sys_collection',$val);
-						$data = [
-							'success' =>true,
-							'message'=>'create collection success'
-						];
-						http_response_code('200');
-			  }
-			echo json_encode($data);
+						$id = $this->collection->insert($input,'sys_collection');
+						$data = array_merge(['id'=>$id],$input);
+						$this->response($data,200);
+			  }			
 		}
 	}
+
+
+	/**
+     * @OA\Post(
+     *     path="/collection/list/update",
+     *     tags={"collection"},
+     *    @OA\Response(response="200",
+	 * 		description="Success",
+	 *      @OA\JsonContent(
+     *		ref="#/components/schemas/CollectionModelList"
+     *     ),
+	 * ),
+     *    @OA\Response(response="400", description="required field",
+	 *       @OA\JsonContent(
+     *       ref="#/components/schemas/required"
+     *     ),
+	 * ),
+     *    @OA\RequestBody(
+     *      required=true,
+	 *      @OA\JsonContent(
+     *		ref="#/components/schemas/CollectionModelList"
+     *     ),
+     *   ),
+	 *   security={{"bearerAuth": {}}},
+     * )
+     */
 
 	public function _update()
 	{
@@ -125,8 +177,7 @@ class Collection extends MY_Controller {
 					'id' => 'id',
 					'name' => 'nanme'					
 				];
-
-				$data = array('success' => false, 'messages' => array());
+				
 				$input = json_decode(trim(file_get_contents('php://input')), true);		
 				if($input)
 				{
@@ -138,9 +189,9 @@ class Collection extends MY_Controller {
 	
 					if ($this->form_validation->run() == FALSE) {
 							foreach ($val as $key => $value) {
-								$data['messages'][$key] = form_error($key);
+								$data[$key] = form_error($key);
 							}							
-							http_response_code('400');
+							$this->response($data,400);
 						}
 						else
 						{
@@ -149,45 +200,60 @@ class Collection extends MY_Controller {
 							];
 								$wh = ['id'=> $input['id'] ];
 	
-								$cc = $this->mdata->check_all('sys_collection',$wh,1);
+								$cc = $this->collection->update($wh,$val,'sys_collection');
 	
-								if($cc)
+								if($cc > 0)
 								{
-								   $cc = $this->mdata->update_all($wh,$val,'sys_collection');
-								   $data = [
-									   'success' =>true,
-									   'message'=>'update collection success'
-								   ];
-								   http_response_code('200');
+						
+								   $this->response($input,200);
 	
 							   }
 							   else
 							   {
 									$data = [
 										'success' =>false,
-										'message'=> "invalid field id"
+										'message'=> "invalid field update"
 									];
-									http_response_code('400');
+									$this->response($data,400);
 							   }
 	
-						}
-					echo json_encode($data);
+						}					
 
 				}
 	}
 
-	public function _delete()
+
+	/**
+     * @OA\Get(
+     *     path="/collection/list/delete",
+     *     tags={"collection"},
+	 * 	   description="Get all collection list param id null, get specific with param id",
+	 *     @OA\Parameter(
+     *       name="id",
+	 *       description="id collection list",
+     *       in="query",
+	 * 		 required=true,
+     *       @OA\Schema(type="integer",)
+     *   ),
+	 * security={{"bearerAuth": {}}},
+	 *    @OA\Response(response="401", description="Unauthorized"),
+     *    @OA\Response(response="200", 
+	 * 		description="Success",
+	 *      @OA\JsonContent(     
+ 	 *         @OA\Property(property="id", type="integer", default=0),
+     *     ),
+     *   ),
+	 * )
+     */
+	public function _remove()
 	{
 		$id = $this->input->get('id');
-		$da = $this->mdata->delete_all('sys_collection',['id'=>$id]);
+		$da = $this->collection->delete(['id'=>$id],'sys_collection');
 
         if($da > 0)
         {
-            $data = [
-                'success' =>true,                
-                'message'=>'delete collection success',
-            ];
-            http_response_code('200');
+			$data = ['id'=>$id];
+			$this->response($data,200);
         }
         else
         {
@@ -195,15 +261,32 @@ class Collection extends MY_Controller {
                 'success' =>false,                
                 'message'=>'delete collection invalid data',
             ];
-            http_response_code('400');
+            $this->response($data,400);
         }
-
 		
-
-		echo json_encode($data);
 	}
 
-    public function data()
+
+	// data
+
+	public function data_post()
+	{
+		$uri = $this->uri->segment(3);
+        
+        switch ($uri) {                                 
+            case 'create':
+                $this->create();
+                break;
+            case 'update':
+                $this->update();
+                break;
+            default:
+                show_404();
+                break;
+        }
+	}
+
+    public function data_get()
 	{
 		$uri = $this->uri->segment(3);
         
@@ -213,14 +296,8 @@ class Collection extends MY_Controller {
             case '':
                 $this->show();
                 break;           
-            case 'create':
-                $this->create();
-                break;
-            case 'update':
-                $this->update();
-                break;
             case 'delete':
-                $this->delete();
+                $this->remove();
                 break;
             default:
                 show_404();
@@ -228,25 +305,71 @@ class Collection extends MY_Controller {
         }
 	}
 
+	/**
+     * @OA\Get(
+     *     path="/collection/data",
+     *     tags={"collection"},
+	 * 	   description="Get all collection data param id null, get specific with param id",
+	 *     @OA\Parameter(
+     *       name="id",
+	 *       description="id list data",
+     *       in="query",
+     *       @OA\Schema(type="integer",default=null)
+     *   ),
+	 * security={{"bearerAuth": {}}},
+	 *    @OA\Response(response="401", description="Unauthorized"),
+     *    @OA\Response(response="200", 
+	 * 		description="Success",
+     *      @OA\MediaType(
+     *         mediaType="application/json",
+     *         @OA\Schema(type="array",
+     *             @OA\Items(type="object",
+	 *				ref="#/components/schemas/CollectionModelList"               
+     *             )
+     *         ),
+     *     ),
+     *   ),
+	 * )
+     */
+
     public function show()
     {
         $id = $this->input->get('id');
 		if($id == null)
 		{
-			$da = $this->mdata->view_all('sys_collection_data');
+			$da = $this->collection->view(null,'sys_collection_data');
 		}
 		else
 		{
-			$da = $this->mdata->view_where('sys_collection_data',['id'=>$id]);
+			$da = $this->mdata->view(['id'=>$id],'sys_collection_data');
 		}
-        $data = [
-            'success' =>true,
-            'data'=>$da,
-        ];
-        http_response_code('200');
-
-		echo json_encode($data);
+		$this->response($da,200);
     }
+
+	/**
+     * @OA\Post(
+     *     path="/collection/data/create",
+     *     tags={"collection"},
+     *    @OA\Response(response="200",
+	 * 		description="Success",
+	 *      @OA\JsonContent(
+     *		ref="#/components/schemas/collectionInputData"
+     *     ),
+	 * ),
+     *    @OA\Response(response="400", description="required field",
+	 *       @OA\JsonContent(
+     *       ref="#/components/schemas/required"
+     *     ),
+	 * ),
+     *    @OA\RequestBody(
+     *      required=true,
+	 *      @OA\JsonContent(
+     *		ref="#/components/schemas/collectionInputData"
+     *     ),
+     *   ),
+	 *   security={{"bearerAuth": {}}},
+     * )
+     */
 
     public function create()
 	{
@@ -255,8 +378,7 @@ class Collection extends MY_Controller {
             'value'=> 'value',
 			'label' => 'label'
 		];
-
-		$data = array('success' => false, 'messages' => array());
+		
 		$input = json_decode(trim(file_get_contents('php://input')), true);		
 		if($input)
 		{
@@ -271,32 +393,41 @@ class Collection extends MY_Controller {
 					foreach ($val as $key => $value) {
 						$data['messages'][$key] = form_error($key);
 					}
-					http_response_code('400');
-			  }
-			  else
-			  {
-						$cc = $this->mdata->insert_all('sys_collection_data',$input);
-                        if($cc > 0 )
-                        {
-                            $data = [
-                                'success' =>true,
-                                'message'=>'create collection data success'
-                            ];
-                            http_response_code('200');
-                        }
-                        else
-                        {
-                            $data = [
-                                'success' =>true,
-                                'message'=>'create collection data failed'
-                            ];
-                            http_response_code('400');
-
-                        }
-			  }
-			echo json_encode($data);
+					$this->response($data,400);
+			}
+			else
+			{
+						$this->collection->insert($input,'sys_collection_data');
+						$this->response($input,200);
+			  }			
 		}
 	}
+
+
+	/**
+     * @OA\Post(
+     *     path="/collection/data/update",
+     *     tags={"collection"},
+     *    @OA\Response(response="200",
+	 * 		description="Success",
+	 *      @OA\JsonContent(
+     *		ref="#/components/schemas/collectionInputData"
+     *     ),
+	 * ),
+     *    @OA\Response(response="400", description="required field",
+	 *       @OA\JsonContent(
+     *       ref="#/components/schemas/required"
+     *     ),
+	 * ),
+     *    @OA\RequestBody(
+     *      required=true,
+	 *      @OA\JsonContent(
+     *		ref="#/components/schemas/collectionInputData"
+     *     ),
+     *   ),
+	 *   security={{"bearerAuth": {}}},
+     * )
+     */
 
 	public function update()
 	{
@@ -354,18 +485,37 @@ class Collection extends MY_Controller {
 				}
 	}
 
-	public function delete()
+	/**
+     * @OA\Get(
+     *     path="/collection/data/delete",
+     *     tags={"collection"},
+	 * 	   description="Get all collection data param id null, get specific with param id",
+	 *     @OA\Parameter(
+     *       name="id",
+	 * 		 required=true,
+	 *       description="id collection data",
+     *       in="query",
+     *       @OA\Schema(type="integer",default=null)
+     *   ),
+	 * security={{"bearerAuth": {}}},
+	 *    @OA\Response(response="401", description="Unauthorized"),
+     *    @OA\Response(response="200", 
+	 * 		description="Success",
+	 *      @OA\JsonContent(     
+ 	 *         @OA\Property(property="collection_id", type="integer", default=0),
+     *     ),
+     *   ),
+	 * )
+     */
+	public function remove()
 	{
 		$id = $this->input->get('id');
-		$da = $this->mdata->delete_all('sys_collection_data',['collection_id'=>$id]);
+		$da = $this->collection->delete(['collection_id'=>$id],'sys_collection_data');
 
         if($da > 0)
         {
-            $data = [
-                'success' =>true,                
-                'message'=>'delete collection success',
-            ];
-            http_response_code('200');
+			$data = ['collection_id'=>$id];
+			$this->response($data,200);
         }
         else
         {
@@ -373,12 +523,8 @@ class Collection extends MY_Controller {
                 'success' =>false,                
                 'message'=>'delete collection invalid data',
             ];
-            http_response_code('400');
+            $this->response($data,400);
         }
-
-		
-
-		echo json_encode($data);
 	}
 
 

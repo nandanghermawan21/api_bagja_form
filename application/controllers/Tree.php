@@ -7,9 +7,9 @@ class Tree extends MY_Controller {
 	public function __construct()
     {
         parent::__construct();
-        $this->_authenticate();
-		header('Content-Type: application/json');   
+        $this->_authenticate();		
     }
+
 
 	public function index()
 	{
@@ -29,13 +29,7 @@ class Tree extends MY_Controller {
 		{
 			$da = $this->mdata->join_all($tab,$sama,$wh);
 		}
-        $data = [
-            'success' =>true,
-            'data'=>$da,
-        ];
-        http_response_code('200');
-
-		echo json_encode($data);
+		$this->response($da, 200);
 	}
 
 	public function create()
@@ -72,11 +66,6 @@ class Tree extends MY_Controller {
 					http_response_code('200');
 		  }
 		echo json_encode($data);
-	}
-
-	public function show()
-	{
-
 	}
 
 	public function update()
@@ -134,7 +123,7 @@ class Tree extends MY_Controller {
 				echo json_encode($data);
 	}
 
-	public function delete()
+	public function remove()
 	{
 		$id = $this->input->get('id');
 		$da = $this->mdata->delete_all('usm_organitation_level',['parent_id'=>$id]);

@@ -34,11 +34,11 @@ class Question extends MY_Controller
      * )
      */
     public function list_get(){
-        $id = $this->get($$this->question->id);
+        $id = $this->get("id");
         if($id == null){
             $data = $this->question->get(null);
         }else{
-            $data = $this->question->get([$$this->question->id => $id]);
+            $data = $this->question->get([$this->question->id => $id]);
         }
         $this->response($data, 200);
     }

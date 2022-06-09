@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class Collection extends MY_Controller
+class Question extends MY_Controller
 {
     public function __construct()
     {
